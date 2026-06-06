@@ -1,11 +1,41 @@
-use std::io; // Import the io library
+use std::cmp::Ordering;
+use std::io;
+
+use rand::Rng;
 
 fn main() {
-    println!("Guess the number!"); // Print the message to the console
-    println!("Please input your guess.");
-    let mut guess = String::new(); // Create a new string mutablevariable
-    io::stdin()
-        .read_line(&mut guess) // Read the line from the console
-        .expect("Failed to read line"); // Print the error message if the line is not read
-    println!("You guessed: {guess}"); // Print the guess to the console
+    println!("Guess the number!");
+
+    let secret_number = rand::thread_rng().gen_range(1..=100);
+
+    loop {
+        println!("Please input your guess.");
+
+        let mut guess = String::new();
+
+        io::stdin()
+            .read_line(&mut guess)
+            .expect("Failed to read line");
+
+        if guess.trim() == "x" {
+            println!("You quit the game!");
+            break;
+        }
+
+        let guess: u32 = match guess.trim().parse() {
+            Ok(num) => num,
+            Err(_) => continue,
+        };
+
+        println!("You guessed: {guess}");
+
+        match guess.cmp(&secret_number) {
+            Ordering::Less => println!("Too small!"),
+            Ordering::Greater => println!("Too big!"),
+            Ordering::Equal => {
+                println!("You win!");
+                break;
+            }
+        }
+    }
 }
